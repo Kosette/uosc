@@ -870,7 +870,7 @@ function get_clipboard()
 	if data then
 		return data
 	end
-	if err and err ~= 'property not found' and err ~= 'property unavailable' then
+	if err then
 		mp.commandv('show-text', 'Get clipboard error: ' .. err)
 	end
 	return nil
@@ -886,7 +886,7 @@ function set_clipboard(payload)
 		mp.commandv('show-text', t('Copied to clipboard') .. ': ' .. payload, 3000)
 		return payload
 	end
-	if err and err ~= 'property not found' and err ~= 'property unavailable' then
+	if err then
 		mp.commandv('show-text', 'Set clipboard error: ' .. err)
 	end
 	return nil

@@ -14,7 +14,7 @@ import (
 func Packager(args []string) {
 	// Display help.
 	if len(args) > 0 && sets.New("--help", "-h").Has(args[0]) {
-		fmt.Printf(`Packages uosc release files into 'release/' directory, while ensuring binaries inside the zip file are marked as executable even when packaged on windows (otherwise this could've just be a simple .ps1/.sh file).`)
+		fmt.Printf(`Packages uosc release files into 'release/' directory.`)
 		os.Exit(0)
 	}
 

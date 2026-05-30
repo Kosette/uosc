@@ -54,8 +54,6 @@ Features:
 
     _**NOTE**: If this command is run in an mpv installation directory with `portable_config`, it'll install there instead of `AppData`._
 
-    _**NOTE2**: The downloaded archive might trigger false positives in some antiviruses. This is explained in [FAQ below](#why-is-the-release-reported-as-malicious-by-some-antiviruses)._
-
     ### Linux & macOS
 
     _Requires **curl** and **unzip**._
