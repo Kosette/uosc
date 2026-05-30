@@ -100,7 +100,6 @@ defaults = {
 	chapter_ranges = 'openings:30abf964,endings:30abf964,ads:c54e4e80',
 	chapter_range_patterns = 'openings:オープニング;endings:エンディング',
 	languages = 'slang,en',
-	subtitles_directory = '~~/subtitles',
 	disable_elements = '',
 }
 options = table_copy(defaults)
@@ -173,8 +172,6 @@ local config_defaults = {
 }
 config = {
 	version = uosc_version,
-	open_subtitles_api_key = 'b0rd16N0bp7DETMpO4pYZwIqmQkZbYQr',
-	open_subtitles_agent = 'uosc v' .. uosc_version,
 	-- sets max rendering frequency in case the
 	-- native rendering frequency could not be detected
 	render_delay = 1 / 60,
@@ -347,7 +344,6 @@ function create_default_menu_items()
 				{title = t('Key bindings'), value = 'script-binding uosc/keybinds'},
 				{title = t('Show in directory'), value = 'script-binding uosc/show-in-directory'},
 				{title = t('Open config folder'), value = 'script-binding uosc/open-config-directory'},
-				{title = t('Update uosc'), value = 'script-binding uosc/update'},
 			},
 		},
 		{title = t('Quit'), value = 'quit'},
@@ -440,12 +436,6 @@ require('lib/utils')
 require('lib/text')
 require('lib/ass')
 require('lib/menus')
-
--- Determine path to ziggy
-do
-	local bin = 'ziggy-' .. (state.platform == 'windows' and 'windows.exe' or state.platform)
-	config.ziggy_path = os.getenv('MPV_UOSC_ZIGGY') or join_path(mp.get_script_directory(), join_path('bin', bin))
-end
 
 --[[ STATE UPDATERS ]]
 
@@ -829,7 +819,6 @@ bind_command('keybinds', function()
 		open_command_menu({type = 'keybinds', items = get_keybinds_items(), search_style = 'palette'})
 	end
 end)
-bind_command('download-subtitles', open_subtitle_downloader)
 bind_command('load-subtitles', create_track_loader_menu_opener({
 	prop = 'sub',
 	title = t('Load subtitles'),
@@ -855,7 +844,6 @@ bind_command('subtitles', create_select_tracklist_type_menu_opener({
 	enable_prop = 'sub-visibility',
 	secondary = {prop = 'secondary-sid', icon = 'vertical_align_top', enable_prop = 'secondary-sub-visibility'},
 	load_command = 'script-binding uosc/load-subtitles',
-	download_command = 'script-binding uosc/download-subtitles',
 }))
 bind_command('audio', create_select_tracklist_type_menu_opener({
 	title = t('Audio'), type = 'audio', prop = 'aid', load_command = 'script-binding uosc/load-audio',
@@ -1075,9 +1063,6 @@ bind_command('open-config-directory', function()
 	else
 		msg.error('Couldn\'t serialize config path "' .. config_path .. '".')
 	end
-end)
-bind_command('update', function()
-	if not Elements:has('updater') then require('elements/Updater'):new() end
 end)
 
 --[[ MESSAGE HANDLERS ]]

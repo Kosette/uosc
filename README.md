@@ -16,7 +16,6 @@ Features:
 -   Fast and efficient thumbnails with [thumbfast](https://github.com/po5/thumbfast) integration.
 -   UIs for:
     -   Selecting subtitle/audio/video track.
-    -   [Downloading subtitles](#download-subtitles) from [Open Subtitles](https://www.opensubtitles.com).
     -   Loading external subtitles.
     -   Selecting stream quality.
     -   Quick directory and playlist navigation.
@@ -106,16 +105,6 @@ Features:
     #### What is going on?
 
     **uosc** places performance as one of its top priorities, but it might feel a bit sluggish because during a video playback, the UI rendering frequency is chained to its frame rate. To test this, you can pause the video which will switch refresh rate to be closer or match the frequency of your monitor, and the UI should feel smoother. This is mpv limitation, and not much we can do about it on our side.
-
-#### Build instructions
-
-To build ziggy (our utility binary) yourself, run:
-
-```
-tools/build ziggy
-```
-
-Which will run the `tools/build(.ps1)` script that builds it for each platform. It requires [go](https://go.dev/) to be installed. Source code is in `src/ziggy`.
 
 ## Options
 
@@ -238,18 +227,6 @@ Displays a file explorer with directory navigation to load a requested track typ
 
 For subtitles, the explorer only displays file types defined in `subtitle_types` option. For audio and video, the ones defined in `video_types` and `audio_types` are displayed.
 
-#### `download-subtitles`
-
-A menu to search and download subtitles from [Open Subtitles](https://www.opensubtitles.com). It can also be opened by selecting the **Download** option in `subtitles` menu.
-
-We fetch results for languages defined in *uosc**'s `languages` option, which defaults to your mpv `slang` configuration.
-
-We also hash the current file and send the hash to Open Subtitles so you can search even with empty query and if your file is known, you'll get subtitles exactly for it.
-
-Subtitles will be downloaded to the same directory as currently opened file, or `~~/subtitles` (folder in your mpv config directory) if playing a URL.
-
-Current Open Subtitles limit for unauthenticated requests is **5 download per day**, but searching is unlimited. Authentication raises downloads to 10, which doesn't feel like it's worth the effort of implementing it, so currently there's no way to authenticate. 5 downloads per day seems sufficient for most use cases anyway, as if you need more, you should probably just deal with it in the browser beforehand so you don't have to fiddle with the subtitle downloading menu every time you start playing a new file.
-
 #### `playlist`
 
 Playlist navigation.
@@ -344,24 +321,6 @@ Additionally, you can also press `ctrl+c` to copy path of a selected item in `pl
 #### `open-config-directory`
 
 Open directory with `mpv.conf` in file explorer.
-
-#### `update`
-
-Updates uosc to the latest stable release right from the UI. Available in the "Utils" section of default menu .
-
-Supported environments:
-
-| Env | Works | Note |
-|:---|:---:|---|
-| Windows | ✔️ | _Not tested on older PowerShell versions. You might need to `Set-ExecutionPolicy` from the install instructions and install with the terminal command first._ |
-| Linux (apt) | ✔️ | |
-| Linux (flatpak) | ✔️ | |
-| Linux (snap) | ❌ | We're not allowed to access commands like `curl` even if they're installed. (Or at least this is what I think the issue is.) |
-| MacOS | ❌ | `(23) Failed writing body` error, whatever that means. |
-
-If you know about a solution to fix self-updater for any of the currently broken environments, please make an issue/PR and share it with us!
-
-**Note:** The terminal commands from install instructions still work fine everywhere, so you can use those to update instead.
 
 ## Menu
 
@@ -472,7 +431,6 @@ ctrl+s      async screenshot                       #! Utils > Screenshot
 alt+i       script-binding uosc/keybinds           #! Utils > Key bindings
 O           script-binding uosc/show-in-directory  #! Utils > Show in directory
 #           script-binding uosc/open-config-directory #! Utils > Open config directory
-#           script-binding uosc/update             #! Utils > Update uosc
 esc         quit                                   #! Quit
 ```
 
@@ -516,35 +474,7 @@ This will parse the codebase for localization strings and use them to either upd
 
 You can then navigate to `src/uosc/intl/languagecode.json` and start translating.
 
-### Setting up binaries
-
-If you want to test or work on something that involves ziggy (our multitool binary, currently handles searching & downloading subtitles), you first need to build it with:
-
-```
-tools/build ziggy
-```
-
-This requires [`go`](https://go.dev/dl/) to be installed and in path. If you don't want to bother with installing go, and there were no changes to ziggy, you can just use the binaries from [latest release](https://github.com/tomasklaen/uosc/releases/latest/download/uosc.zip). Place folder `scripts/uosc/bin` from `uosc.zip` into `src/uosc/bin`.
-
 ## FAQ
-
-#### Why is the release zip size in megabytes? Isn't this just a lua script?
-
-We are limited in what we can do in mpv's lua scripting environment. To work around this, we include a binary tool (one for each platform), that we call to handle stuff we can't do in lua. Currently this means searching & downloading subtitles, accessing clipboard data, and in future might improve self updating, and potentially other things.
-
-Other scripts usually choose to go the route of adding python scripts and requiring users to install the runtime. I don't like this as I want the installation process to be as seamless and as painless as possible. I also don't want to contribute to potential python version mismatch issues, because one tool depends on 2.7, other latest 3, and this one 3.9 only and no newer (real world scenario that happened to me), now have fun reconciling this. Depending on external runtimes can be a mess, and shipping a stable, tiny, and fast binary that users don't even have to know about is imo more preferable than having unstable external dependencies and additional installation steps that force everyone to install and manage hundreds of megabytes big runtimes in global `PATH`.
-
-#### Why don't you have `uosc-{platform}.zip` releases and only include binaries for the concerned platform in each?
-
-Then you wouldn't be able to sync your mpv config between platforms and everything _just work_.
-
-#### Why is the release reported as malicious by some antiviruses?
-
-Some antiviruses find our binaries suspicious due to the way go packages them. This is a known issue with all go binaries (https://go.dev/doc/faq#virus). I think the only way to solve that would be to sign them (not 100% sure though), but I'm not paying to work on free stuff. If anyone is bothered by this, and would be willing to donate a code signing certificate, let me know.
-
-If you want to check the binaries are safe, the code is in `src/ziggy`, and you can build them yourself by running `tools/build ziggy` in the repository root.
-
-We might eventually rewrite it in something else.
 
 #### Why _uosc_?
 

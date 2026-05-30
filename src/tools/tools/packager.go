@@ -1,13 +1,10 @@
 package tools
 
 import (
-	"archive/zip"
-	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"uosc/bins/src/tools/lib"
 
@@ -31,24 +28,11 @@ func Packager(args []string) {
 	releaseArchivePath := filepath.Join(releaseRoot, "uosc.zip")
 	sourceConfigPath := filepath.Join(cwd, "src/uosc.conf")
 
-	// Naive check binaries are built.
-	bins := must(os.ReadDir(filepath.Join(cwd, "src/uosc/bin")))
-	if len(bins) == 0 {
-		check(errors.New("binaries are not built ('src/uosc/bin' is empty)"))
-	}
-
 	// Cleanup old release.
 	check(os.RemoveAll(releaseRoot))
 
 	// Package new release
-	var modHeaders lib.HeaderModFn = func(header *zip.FileHeader) *zip.FileHeader {
-		// Mark binaries as executable.
-		if strings.HasPrefix(header.Name, "scripts/uosc/bin/") {
-			header.SetMode(0755)
-		}
-		return header
-	}
-	stats := must(lib.ZipFilesWithHeaders(releaseArchiveSrcDstMap, releaseArchivePath, modHeaders))
+	stats := must(lib.ZipFilesWithHeaders(releaseArchiveSrcDstMap, releaseArchivePath, nil))
 
 	// Copy config to release folder for convenience.
 	configFileSrc := must(os.Open(sourceConfigPath))
