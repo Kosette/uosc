@@ -1,0 +1,32 @@
+name: Build
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Build tools
+        run: tools/build tools
+
+      - name: Package release
+        run: tools/package
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: uosc
+          path: release/
