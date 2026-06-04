@@ -9,7 +9,7 @@ import (
 
 func TestZipFilesWithHeadersNilHeaderMod(t *testing.T) {
 	root := t.TempDir()
-	srcDir := filepath.Join(root, "src")
+	srcDir := filepath.Join(root, "uosc")
 	outPath := filepath.Join(root, "release", "uosc.zip")
 
 	if err := os.MkdirAll(filepath.Join(srcDir, "nested"), 0o755); err != nil {
@@ -49,8 +49,8 @@ func TestZipFilesWithHeadersNilHeaderMod(t *testing.T) {
 	}
 
 	for _, want := range []string{
-		"scripts/root.txt",
-		"scripts/nested/child.txt",
+		"scripts/uosc/root.txt",
+		"scripts/uosc/nested/child.txt",
 	} {
 		if !got[want] {
 			t.Fatalf("expected archive entry %q, got %#v", want, got)
