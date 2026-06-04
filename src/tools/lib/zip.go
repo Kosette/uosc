@@ -76,7 +76,9 @@ func ZipFilesWithHeaders(files map[string]string, outputFile string, headerMod H
 		}
 		header.Name = nameInArchive
 		header.Method = zip.Deflate
-		header = headerMod(header)
+		if headerMod != nil {
+			header = headerMod(header)
+		}
 		if header.Name == "" {
 			return nil
 		}
